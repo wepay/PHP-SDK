@@ -5,11 +5,11 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.1';
+	const VERSION = '0.0.2';
 
 	/**
 	 * Scope fields
-	 * Passed into Wepay::getAuthorizationUri
+	 * Passed into Wepay::getAuthorizationUri as array
 	 */
 	const SCOPE_MANAGE_ACCOUNTS  = 'manage_accounts';   // Open and interact with accounts
 	const SCOPE_VIEW_BALANCE     = 'view_balance';      // View account balances
@@ -21,12 +21,15 @@ class WePay {
 	 * Application's client ID
 	 */
 	private static $client_id;
+
 	/**
 	 * Application's client secret
 	 */
 	private static $client_secret;
 
-
+	/**
+	 * Pass Wepay::$all_scopes into getAuthorizationUri if your application desires full access
+	 */
 	public static $all_scopes = array(
 		self::SCOPE_MANAGE_ACCOUNTS,
 		self::SCOPE_VIEW_BALANCE,
@@ -37,7 +40,6 @@ class WePay {
 
 	/**
 	 * Determines whether to use WePay's staing or production servers
-	 * Modify this value at runtime with WePay::useStaging() and WePay::useProduction
 	 */
 	private static $production = null;
 
@@ -45,47 +47,11 @@ class WePay {
 	 * cURL handle
 	 */
 	private $ch;
+
 	/**
 	 * Authenticated user's access token
 	 */
 	private $token;
-
-	/**
-	 * Configure SDK to run against WePay's staging servers
-	 * @return void
-	 * @throws RuntimeException
-	 */
-	public static function useStaging($client_id, $client_secret) {
-		if (self::$production !== null) {
-			throw new RuntimeException('API mode has already been set.');
-		}
-		self::$production    = false;
-		self::$client_id     = $client_id;
-		self::$client_secret = $client_secret;
-	}
-
-	/**
-	 * Configure SDK to run against WePay's production servers
-	 * @return void
-	 * @throws RuntimeException
-	 */
-	public static function useProduction($client_id, $client_secret) {
-		if (self::$production !== null) {
-			throw new RuntimeException('API mode has already been set.');
-		}
-		self::$production    = true;
-		self::$client_id     = $client_id;
-		self::$client_secret = $client_secret;
-	}
-
-	private static function getDomain() {
-		if (self::$production) {
-			return 'https://wepayapi.com/v2/';
-		}
-		else {
-			return 'https://stage.wepay.com/v2/';
-		}
-	}
 
 	/**
 	 * Generate URI used during oAuth authorization
@@ -100,6 +66,9 @@ class WePay {
 	public static function getAuthorizationUri(array $scope, $redirect_uri, array $options = array()) {
 		// This does not use WePay::getDomain() because the user authentication
 		// domain is different than the API call domain
+		if (self::$production === null) {
+			throw new RuntimeException('You must initialize the WePay SDK with WePay::useStaging() or WePay::useProduction()');
+		}
 		$domain = self::$production ? 'https://www.wepay.com' : 'https://stage.wepay.com';
 		$uri = $domain . '/v2/oauth2/authorize?';
 		$uri .= http_build_query(array(
@@ -111,6 +80,18 @@ class WePay {
 			'user_email'   => '',                // do not hardcode
 		));
 		return $uri;
+	}
+
+	private static function getDomain() {
+		if (self::$production === true) {
+			return 'https://wepayapi.com/v2/';
+		}
+		elseif (self::$production === false) {
+			return 'https://stage.wepay.com/v2/';
+		}
+		else {
+			throw new RuntimeException('You must initialize the WePay SDK with WePay::useStaging() or WePay::useProduction()');
+		}
 	}
 
 	/**
@@ -136,6 +117,38 @@ class WePay {
 			return $parsed;
 		}
 		return false;
+	}
+
+	/**
+	 * Configure SDK to run against WePay's production servers
+	 * @param string $client_id      Your application's client id
+	 * @param string $client_secret  Your application's client secret
+	 * @return void
+	 * @throws RuntimeException
+	 */
+	public static function useProduction($client_id, $client_secret) {
+		if (self::$production !== null) {
+			throw new RuntimeException('API mode has already been set.');
+		}
+		self::$production    = true;
+		self::$client_id     = $client_id;
+		self::$client_secret = $client_secret;
+	}
+
+	/**
+	 * Configure SDK to run against WePay's staging servers
+	 * @param string $client_id      Your application's client id
+	 * @param string $client_secret  Your application's client secret
+	 * @return void
+	 * @throws RuntimeException
+	 */
+	public static function useStaging($client_id, $client_secret) {
+		if (self::$production !== null) {
+			throw new RuntimeException('API mode has already been set.');
+		}
+		self::$production    = false;
+		self::$client_id     = $client_id;
+		self::$client_secret = $client_secret;
 	}
 
 	/**
@@ -200,7 +213,6 @@ class WePay {
 		return $result;
 	}
 }
-
 
 /**
  * Different problems will have different exception types so you can
