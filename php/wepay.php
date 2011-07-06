@@ -1,18 +1,7 @@
 <?php
 
 class WePay {
-	/**
-	 * Application's client ID
-	 */
-	const CLIENT_ID = 'YOUR CLIENT ID';
-	/**
-	 * Application's client secret
-	 */
-	const CLIENT_SECRET = 'YOUR CLIENT SECRET';
-	/**
-	 * Application's redirect URI
-	 */
-	const REDIRECT_URI = 'YOUR REDIRECT URI';
+
 	/**
 	 * Version number - sent in user agent string
 	 */
@@ -29,11 +18,28 @@ class WePay {
 	const SCOPE_VIEW_USER        = 'view_user';         // Get details about authenticated user
 
 	/**
+	 * Application's client ID
+	 */
+	private static $client_id;
+	/**
+	 * Application's client secret
+	 */
+	private static $client_secret;
+
+
+	public static $all_scopes = array(
+		self::SCOPE_MANAGE_ACCOUNTS,
+		self::SCOPE_VIEW_BALANCE,
+		self::SCOPE_COLLECT_PAYMENTS,
+		self::SCOPE_REFUND_PAYMENTS,
+		self::SCOPE_VIEW_USER,
+	);
+
+	/**
 	 * Determines whether to use WePay's staing or production servers
-	 * Defaults to production
 	 * Modify this value at runtime with WePay::useStaging() and WePay::useProduction
 	 */
-	private static $production = true;
+	private static $production = null;
 
 	/**
 	 * cURL handle
@@ -47,17 +53,29 @@ class WePay {
 	/**
 	 * Configure SDK to run against WePay's staging servers
 	 * @return void
+	 * @throws RuntimeException
 	 */
-	public static function useStaging() {
-		self::$production = false;
+	public static function useStaging($client_id, $client_secret) {
+		if (self::$production !== null) {
+			throw new RuntimeException('API mode has already been set.');
+		}
+		self::$production    = false;
+		self::$client_id     = $client_id;
+		self::$client_secret = $client_secret;
 	}
 
 	/**
 	 * Configure SDK to run against WePay's production servers
 	 * @return void
+	 * @throws RuntimeException
 	 */
-	public static function useProduction() {
-		self::$production = true;
+	public static function useProduction($client_id, $client_secret) {
+		if (self::$production !== null) {
+			throw new RuntimeException('API mode has already been set.');
+		}
+		self::$production    = true;
+		self::$client_id     = $client_id;
+		self::$client_secret = $client_secret;
 	}
 
 	private static function getDomain() {
@@ -74,18 +92,19 @@ class WePay {
 	 * Redirect your user to this URI where they can grant your application
 	 * permission to make API calls
 	 * @link https://www.wepay.com/developer/reference/oauth2
-	 * @param array $scope             List of scope fields for which your appliation wants access
-	 * @param array $options optional  user_name,user_email which will be pre-fileld on login form, state to be returned in querystring of redirect_uri
+	 * @param array  $scope             List of scope fields for which your appliation wants access
+	 * @param string $redirect_uri      Where user goes after logging in at WePay (domain must match application settings)
+	 * @param array  $options optional  user_name,user_email which will be pre-fileld on login form, state to be returned in querystring of redirect_uri
 	 * @return string URI to which you must redirect your user to grant access to your application
 	 */
-	public static function getAuthorizationUri(array $scope, array $options = array()) {
+	public static function getAuthorizationUri(array $scope, $redirect_uri, array $options = array()) {
 		// This does not use WePay::getDomain() because the user authentication
 		// domain is different than the API call domain
 		$domain = self::$production ? 'https://www.wepay.com' : 'https://stage.wepay.com';
 		$uri = $domain . '/v2/oauth2/authorize?';
 		$uri .= http_build_query(array(
-			'client_id'    => self::CLIENT_ID,
-			'redirect_uri' => self::REDIRECT_URI,
+			'client_id'    => self::$client_id,
+			'redirect_uri' => $redirect_uri,
 			'scope'        => implode(',', $scope),
 			'state'        => '',                // do not hardcode
 			'user_name'    => '',                // do not hardcode
@@ -96,18 +115,19 @@ class WePay {
 
 	/**
 	 * Exchange a temporary access code for a (semi-)permanent access token
-	 * @param string $code 'code' field from query string passed to your redirect_uri page
+	 * @param string $code          'code' field from query string passed to your redirect_uri page
+	 * @param string $redirect_uri  Where user went after logging in at WePay (must match value from getAuthorizationUri)
 	 * @return StdClass|false
 	 *  user_id
 	 *  access_token
 	 *  token_type
 	 */
-	public static function getToken($code) {
+	public static function getToken($code, $redirect_uri) {
 		$uri = self::getDomain() . 'oauth2/token?';
 		$uri .= http_build_query(array(
-			'client_id'     => self::CLIENT_ID,
-			'client_secret' => self::CLIENT_SECRET,
-			'redirect_uri'  => self::REDIRECT_URI,
+			'client_id'     => self::$client_id,
+			'client_secret' => self::$client_secret,
+			'redirect_uri'  => $redirect_uri,
 			'code'          => $code,
 			'state'         => '', // do not hardcode
 		));
