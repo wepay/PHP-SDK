@@ -1,0 +1,203 @@
+<?php
+
+class WePay {
+	/**
+	 * Application's client ID
+	 */
+	const CLIENT_ID = 'YOUR CLIENT ID';
+	/**
+	 * Application's client secret
+	 */
+	const CLIENT_SECRET = 'YOUR CLIENT SECRET';
+	/**
+	 * Application's redirect URI
+	 */
+	const REDIRECT_URI = 'YOUR REDIRECT URI';
+	/**
+	 * Version number - sent in user agent string
+	 */
+	const VERSION = '0.0.1';
+
+	/**
+	 * Scope fields
+	 * Passed into Wepay::getAuthorizationUri
+	 */
+	const SCOPE_MANAGE_ACCOUNTS  = 'manage_accounts';   // Open and interact with accounts
+	const SCOPE_VIEW_BALANCE     = 'view_balance';      // View account balances
+	const SCOPE_COLLECT_PAYMENTS = 'collect_payments';  // Create and interact with checkouts
+	const SCOPE_REFUND_PAYMENTS  = 'refund_payments';   // Refund checkouts
+	const SCOPE_VIEW_USER        = 'view_user';         // Get details about authenticated user
+
+	/**
+	 * Determines whether to use WePay's staing or production servers
+	 * Defaults to production
+	 * Modify this value at runtime with WePay::useStaging() and WePay::useProduction
+	 */
+	private static $production = true;
+
+	/**
+	 * cURL handle
+	 */
+	private $ch;
+	/**
+	 * Authenticated user's access token
+	 */
+	private $token;
+
+	/**
+	 * Configure SDK to run against WePay's staging servers
+	 * @return void
+	 */
+	public static function useStaging() {
+		self::$production = false;
+	}
+
+	/**
+	 * Configure SDK to run against WePay's production servers
+	 * @return void
+	 */
+	public static function useProduction() {
+		self::$production = true;
+	}
+
+	private static function getDomain() {
+		if (self::$production) {
+			return 'https://wepayapi.com/v2/';
+		}
+		else {
+			return 'https://stage.wepay.com/v2/';
+		}
+	}
+
+	/**
+	 * Generate URI used during oAuth authorization
+	 * Redirect your user to this URI where they can grant your application
+	 * permission to make API calls
+	 * @link https://www.wepay.com/developer/reference/oauth2
+	 * @param array $scope             List of scope fields for which your appliation wants access
+	 * @param array $options optional  user_name,user_email which will be pre-fileld on login form, state to be returned in querystring of redirect_uri
+	 * @return string URI to which you must redirect your user to grant access to your application
+	 */
+	public static function getAuthorizationUri(array $scope, array $options = array()) {
+		// This does not use WePay::getDomain() because the user authentication
+		// domain is different than the API call domain
+		$domain = self::$production ? 'https://www.wepay.com' : 'https://stage.wepay.com';
+		$uri = $domain . '/v2/oauth2/authorize?';
+		$uri .= http_build_query(array(
+			'client_id'    => self::CLIENT_ID,
+			'redirect_uri' => self::REDIRECT_URI,
+			'scope'        => implode(',', $scope),
+			'state'        => '',                // do not hardcode
+			'user_name'    => '',                // do not hardcode
+			'user_email'   => '',                // do not hardcode
+		));
+		return $uri;
+	}
+
+	/**
+	 * Exchange a temporary access code for a (semi-)permanent access token
+	 * @param string $code 'code' field from query string passed to your redirect_uri page
+	 * @return StdClass|false
+	 *  user_id
+	 *  access_token
+	 *  token_type
+	 */
+	public static function getToken($code) {
+		$uri = self::getDomain() . 'oauth2/token?';
+		$uri .= http_build_query(array(
+			'client_id'     => self::CLIENT_ID,
+			'client_secret' => self::CLIENT_SECRET,
+			'redirect_uri'  => self::REDIRECT_URI,
+			'code'          => $code,
+			'state'         => '', // do not hardcode
+		));
+		$response = file_get_contents($uri);
+		if ($parsed = json_decode($response)) {
+			return $parsed;
+		}
+		return false;
+	}
+
+	/**
+	 * Create a new API session
+	 * @param string $token - access_token returned from WePay::getToken
+	 */
+	public function __construct($token) {
+		$this->token = $token;
+	}
+
+	/**
+	 * Clean up cURL handle
+	 */
+	public function __destruct() {
+		if ($this->ch) {
+			curl_close($this->ch);
+		}
+	}
+
+	/**
+	 * Make API calls against authenticated user
+	 * @param string $endpoint - API call to make (ex. 'user', 'account/find')
+	 * @param array  $values   - Associative array of values to send in API call
+	 * @return StdClass
+	 * @throws WePayException on failure
+	 * @throws Exception on catastrophic failure (non-WePay-specific cURL errors)
+	 */
+	public function request($endpoint, array $values = array()) {
+		if (!$this->ch) {
+			$this->ch = curl_init();
+			curl_setopt($this->ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
+			curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer $this->token"));
+			curl_setopt($this->ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
+			curl_setopt($this->ch, CURLOPT_POST, true); // WePay's API is not strictly RESTful, so all requests are sent as POST
+		}
+		$uri = self::getDomain() . $endpoint;
+		curl_setopt($this->ch, CURLOPT_URL, $uri);
+		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $values);
+		$raw = curl_exec($this->ch);
+		if ($errno = curl_errno($this->ch)) {
+			// Set up special handling for request timeouts
+			if ($errno == CURLE_OPERATION_TIMEOUT) {
+				throw new WePayServerException;
+			}
+			throw new Exception('cURL error while making API call to WePay: ' . curl_error($this->ch), $errno);
+		}
+		$result = json_decode($raw);
+		$httpCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+		if ($httpCode >= 400) {
+			if ($httpCode >= 500) {
+				throw new WePayServerException($result->error_description);
+			}
+			switch ($result->error) {
+				case 'invalid_request':
+					throw new WePayRequestException($result->error_description, $httpCode);
+				case 'access_denied':
+				default:
+					throw new WePayPermissionException($result->error_description, $httpCode);
+			}
+		}
+		return $result;
+	}
+}
+
+
+/**
+ * Different problems will have different exception types so you can
+ * catch and handle them differently.
+ * 
+ * WePayServerException indicates some sort of 500-level error code and
+ * was unavoidable from your perspective. You may need to re-run the
+ * call, or check whether it was received (use a "find" call with your
+ * reference_id and make a decision based on the response)
+ * 
+ * WePayRequestException indicates a development error - invalid endpoint,
+ * erroneous parameter, etc.
+ * 
+ * WePayPermissionException indicates your authorization token has expired,
+ * was revoked, or is lacking in scope for the call you made
+ */
+class WePayException extends Exception {}
+class WePayRequestException extends WePayException {}
+class WePayPermissionException extends WePayException {}
+class WePayServerException extends WePayException {}
