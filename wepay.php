@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.2';
+	const VERSION = '0.0.3';
 
 	/**
 	 * Scope fields
@@ -183,7 +183,7 @@ class WePay {
 			curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer $this->token"));
 			curl_setopt($this->ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
-			curl_setopt($this->ch, CURLOPT_POST, true); // WePay's API is not strictly RESTful, so all requests are sent as POST
+			curl_setopt($this->ch, CURLOPT_POST, !empty($values)); // WePay's API is not strictly RESTful, so all requests are sent as POST unless there are no request values
 		}
 		$uri = self::getDomain() . $endpoint;
 		curl_setopt($this->ch, CURLOPT_URL, $uri);
