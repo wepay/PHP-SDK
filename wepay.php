@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.3';
+	const VERSION = '0.0.4';
 
 	/**
 	 * Scope fields
@@ -104,19 +104,45 @@ class WePay {
 	 *  token_type
 	 */
 	public static function getToken($code, $redirect_uri) {
-		$uri = self::getDomain() . 'oauth2/token?';
-		$uri .= http_build_query(array(
+		$uri = self::getDomain() . 'oauth2/token';
+		$params = (array(
 			'client_id'     => self::$client_id,
 			'client_secret' => self::$client_secret,
 			'redirect_uri'  => $redirect_uri,
 			'code'          => $code,
 			'state'         => '', // do not hardcode
 		));
-		$response = file_get_contents($uri);
-		if ($parsed = json_decode($response)) {
-			return $parsed;
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
+		curl_setopt($ch, CURLOPT_POST, TRUE);
+		curl_setopt($ch, CURLOPT_URL, $uri);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		$raw = curl_exec($ch);
+		if ($errno = curl_errno($ch)) {
+			// Set up special handling for request timeouts
+			if ($errno == CURLE_OPERATION_TIMEOUT) {
+				throw new WePayServerException;
+			}
+			throw new Exception('cURL error while making API call to WePay: ' . curl_error($ch), $errno);
 		}
-		return false;
+		$result = json_decode($raw);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if ($httpCode >= 400) {
+			if ($httpCode >= 500) {
+				throw new WePayServerException($result->error_description);
+			}
+			switch ($result->error) {
+				case 'invalid_request':
+					throw new WePayRequestException($result->error_description, $httpCode);
+				case 'access_denied':
+				default:
+					throw new WePayPermissionException($result->error_description, $httpCode);
+			}
+		}
+		return $result;
 	}
 
 	/**
