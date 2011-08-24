@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.4';
+	const VERSION = '0.0.5';
 
 	/**
 	 * Scope fields
@@ -75,9 +75,9 @@ class WePay {
 			'client_id'    => self::$client_id,
 			'redirect_uri' => $redirect_uri,
 			'scope'        => implode(',', $scope),
-			'state'        => '',                // do not hardcode
-			'user_name'    => '',                // do not hardcode
-			'user_email'   => '',                // do not hardcode
+			'state'        => empty($options['state'])      ? '' : $options['state'],
+			'user_name'    => empty($options['user_name'])  ? '' : $options['user_name'],
+			'user_email'   => empty($options['user_email']) ? '' : $options['user_email'],
 		));
 		return $uri;
 	}
