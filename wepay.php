@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.5';
+	const VERSION = '0.0.6';
 
 	/**
 	 * Scope fields
@@ -123,7 +123,7 @@ class WePay {
 		$raw = curl_exec($ch);
 		if ($errno = curl_errno($ch)) {
 			// Set up special handling for request timeouts
-			if ($errno == CURLE_OPERATION_TIMEOUT) {
+			if ($errno == CURLE_OPERATION_TIMEDOUT) {
 				throw new WePayServerException;
 			}
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error($ch), $errno);
@@ -217,7 +217,7 @@ class WePay {
 		$raw = curl_exec($this->ch);
 		if ($errno = curl_errno($this->ch)) {
 			// Set up special handling for request timeouts
-			if ($errno == CURLE_OPERATION_TIMEOUT) {
+			if ($errno == CURLE_OPERATION_TIMEDOUT) {
 				throw new WePayServerException;
 			}
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error($this->ch), $errno);
