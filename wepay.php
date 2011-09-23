@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.0.8';
+	const VERSION = '0.0.9';
 
 	/**
 	 * Scope fields
@@ -213,7 +213,9 @@ class WePay {
 		}
 		$uri = self::getDomain() . $endpoint;
 		curl_setopt($this->ch, CURLOPT_URL, $uri);
-		curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($values));
+		if (!empty($values)) {
+			curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($values));
+		}
 		$raw = curl_exec($this->ch);
 		if ($errno = curl_errno($this->ch)) {
 			// Set up special handling for request timeouts
@@ -259,3 +261,8 @@ class WePayException extends Exception {}
 class WePayRequestException extends WePayException {}
 class WePayPermissionException extends WePayException {}
 class WePayServerException extends WePayException {}
+
+
+WePay::useStaging('asdf','sadf');
+$wepay = new WePay('59a8e0337281a08eb901a069f55b5f2efe9db1c8c90927e1638b357aadd46c28');
+var_dump($wepay->request('user', array()));
