@@ -1,9 +1,11 @@
+<?php
+require './_shared.php';
+?>
 <h1>WePay Demo App: User Info</h1>
 <a href="index.php">Back</a>
 <br />
 
 <?php
-require './_shared.php';
 try {
 	$wepay = new WePay($_SESSION['wepay_access_token']);
 	$user = $wepay->request('user');

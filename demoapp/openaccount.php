@@ -1,10 +1,12 @@
+<?php
+require './_shared.php';
+?>
 <h1>WePay Demo App: Open Account</h1>
 <a href="index.php">Back</a>
 <br />
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	require './_shared.php';
 	if (isset($_POST['account_name']) && isset($_POST['account_description'])) {
 		// WePay sanitizes its own data, but displaying raw POST data on your own site is a XSS security hole.
 		$name = htmlentities($_POST['account_name']);
