@@ -47,7 +47,7 @@ try {
 	
 	<body>
 		
-		<h1>List all accounts:</h1>
+		<h1>Checkout:</h1>
 		
 		<p>The user will checkout here:</p>
 		
