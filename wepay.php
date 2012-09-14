@@ -204,10 +204,14 @@ class WePay {
 	 */
 	public function request($endpoint, array $values = array()) {
 		if (!$this->ch) {
+			$headers = array("Content-Type: application/json"); // always pass the correct Content-Type header
+			if ($this->token) { // if we have an access_token, add it to the Authorization header
+				$headers[] = "Authorization: Bearer $this->token";
+			}
 			$this->ch = curl_init();
 			curl_setopt($this->ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
 			curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer $this->token", "Content-Type: application/json"));
+			curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
 			curl_setopt($this->ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
 			curl_setopt($this->ch, CURLOPT_POST, !empty($values)); // WePay's API is not strictly RESTful, so all requests are sent as POST unless there are no request values
 		}
