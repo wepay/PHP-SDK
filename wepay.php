@@ -224,7 +224,7 @@ class WePay {
 		if ($errno = curl_errno($this->ch)) {
 			// Set up special handling for request timeouts
 			if ($errno == CURLE_OPERATION_TIMEOUTED) {
-				throw new WePayServerException;
+				throw new WePayServerException("Timeout occurred while trying to connect to WePay");
 			}
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error($this->ch), $errno);
 		}
