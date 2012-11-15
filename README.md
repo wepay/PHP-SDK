@@ -75,3 +75,11 @@ Then you can make a simple API call. This will list the user's accounts availabl
 	}
 
 And that's it!  For more detail on what API calls are available, their parameters and responses, and what permissions they require, please see [our documentation](https://www.wepay.com/developer/reference). For some more detailed examples, look in the `demoapp` directory and check the README. Dropping the entire directory in a web-accessible location and adding your API keys should allow you to be up and running in just a few seconds.
+
+### SSL Certificate ###
+
+If making an API call causes the following problem:
+
+	Uncaught exception 'Exception' with message 'cURL error while making API call to WePay: SSL certificate problem, verify that the CA cert is OK. Details: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed'
+
+You can read the solution here: https://support.wepay.com/entries/21095813-problem-with-ssl-certificate-verification
