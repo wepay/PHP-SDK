@@ -232,14 +232,14 @@ class WePay {
 		$httpCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
 			if ($httpCode >= 500) {
-				throw new WePayServerException($result->error_description);
+				throw new WePayServerException($result->error_description, $httpCode, $result);
 			}
 			switch ($result->error) {
 				case 'invalid_request':
-					throw new WePayRequestException($result->error_description, $httpCode);
+					throw new WePayRequestException($result->error_description, $httpCode, $result);
 				case 'access_denied':
 				default:
-					throw new WePayPermissionException($result->error_description, $httpCode);
+					throw new WePayPermissionException($result->error_description, $httpCode, $result);
 			}
 		}
 		return $result;
@@ -249,19 +249,25 @@ class WePay {
 /**
  * Different problems will have different exception types so you can
  * catch and handle them differently.
- * 
+ *
  * WePayServerException indicates some sort of 500-level error code and
  * was unavoidable from your perspective. You may need to re-run the
  * call, or check whether it was received (use a "find" call with your
  * reference_id and make a decision based on the response)
- * 
+ *
  * WePayRequestException indicates a development error - invalid endpoint,
  * erroneous parameter, etc.
- * 
+ *
  * WePayPermissionException indicates your authorization token has expired,
  * was revoked, or is lacking in scope for the call you made
  */
-class WePayException extends Exception {}
+class WePayException extends Exception {
+	public function __construct($description = '', $http_code = FALSE, $response = FALSE, $code = 0, $previous = NULL)
+	{
+		$this->response = $response;
+		parent::__construct($description, $code, $previous);
+	}
+}
 class WePayRequestException extends WePayException {}
 class WePayPermissionException extends WePayException {}
 class WePayServerException extends WePayException {}
