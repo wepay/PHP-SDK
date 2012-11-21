@@ -116,7 +116,7 @@ class WePay {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_URL, $uri);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
