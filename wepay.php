@@ -116,7 +116,7 @@ class WePay {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
+		curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_URL, $uri);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
@@ -212,7 +212,7 @@ class WePay {
 			curl_setopt($this->ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
 			curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($this->ch, CURLOPT_TIMEOUT, 5); // 5-second timeout, adjust to taste
+			curl_setopt($this->ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
 			curl_setopt($this->ch, CURLOPT_POST, !empty($values)); // WePay's API is not strictly RESTful, so all requests are sent as POST unless there are no request values
 		}
 		$uri = self::getDomain() . $endpoint;
