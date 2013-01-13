@@ -182,6 +182,9 @@ class WePay {
 	 * @param string $token - access_token returned from WePay::getToken
 	 */
 	public function __construct($token) {
+		if (!is_string($token)) {
+			throw new InvalidArgumentException('$token must be a string, ' . gettype($token) . ' provided');
+		}
 		$this->token = $token;
 	}
 
