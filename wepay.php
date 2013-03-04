@@ -30,7 +30,7 @@ class WePay {
 
 
 	/**
-	 * API Version 
+	 * API Version
 	 * https://www.wepay.com/developer/reference/versioning
 	 */
 	private static $api_version;
@@ -134,7 +134,6 @@ class WePay {
 			'code'          => $code,
 			'state'         => '', // do not hardcode
 		));
-		$result = self::make_request('oauth2/token', $params);
 		return $result;
 	}
 
@@ -185,11 +184,11 @@ class WePay {
 			return 'staging';
 		}
 	}
-	
+
 	/**
 	 * Set Api Version
 	 * https://www.wepay.com/developer/reference/versioning
-	 * 
+	 *
 	 * @param string $version  Api Version to send in call request header
 	 */
 	public static function setApiVersion($version) {
@@ -216,7 +215,7 @@ class WePay {
 			self::$ch = NULL;
 		}
 	}
-	
+
 	/**
 	 * create the cURL request and execute it
 	 */
@@ -235,21 +234,21 @@ class WePay {
 		curl_setopt(self::$ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt(self::$ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
 		curl_setopt(self::$ch, CURLOPT_POST, !empty($values)); // WePay's API is not strictly RESTful, so all requests are sent as POST unless there are no request values
-		
+
 		$uri = self::getDomain() . $endpoint;
 		curl_setopt(self::$ch, CURLOPT_URL, $uri);
-		
+
 		if (!empty($values)) {
 			curl_setopt(self::$ch, CURLOPT_POSTFIELDS, json_encode($values));
 		}
-		
+
 		$raw = curl_exec(self::$ch);
 		if ($errno = curl_errno(self::$ch)) {
 			// Set up special handling for request timeouts
 			if ($errno == CURLE_OPERATION_TIMEOUTED) {
 				throw new WePayServerException("Timeout occurred while trying to connect to WePay");
 			}
-			throw new Exception('cURL error while making API call to WePay: ' . curl_error(self::$ch), $errno);
+			throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error($this->ch), $errno);
 		}
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
@@ -268,7 +267,7 @@ class WePay {
 					throw new WePayPermissionException($result->error_description, $httpCode, $result, $result->error_code);
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -282,13 +281,13 @@ class WePay {
 	 */
 	public function request($endpoint, array $values = array()) {
 		$headers = array();
-		
+
 		if ($this->token) { // if we have an access_token, add it to the Authorization header
 			$headers[] = "Authorization: Bearer $this->token";
 		}
-		
+
 		$result = self::make_request($endpoint, $values, $headers);
-		
+
 		return $result;
 	}
 }
