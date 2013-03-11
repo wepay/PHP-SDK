@@ -128,7 +128,7 @@ class WePay {
 			if ($errno == CURLE_OPERATION_TIMEOUTED) {
 				throw new WePayServerException;
 			}
-			throw new Exception('cURL error while making API call to WePay: ' . curl_error($ch), $errno);
+			throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error($this->ch), $errno);
 		}
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -231,7 +231,7 @@ class WePay {
 			if ($errno == CURLE_OPERATION_TIMEOUTED) {
 				throw new WePayServerException("Timeout occurred while trying to connect to WePay");
 			}
-			throw new Exception('cURL error while making API call to WePay: ' . curl_error($this->ch), $errno);
+			throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error($this->ch), $errno);
 		}
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
