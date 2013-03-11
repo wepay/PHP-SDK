@@ -5,17 +5,18 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '0.1.0';
 
 	/**
 	 * Scope fields
 	 * Passed into Wepay::getAuthorizationUri as array
 	 */
-	const SCOPE_MANAGE_ACCOUNTS  = 'manage_accounts';   // Open and interact with accounts
-	const SCOPE_VIEW_BALANCE     = 'view_balance';      // View account balances
-	const SCOPE_COLLECT_PAYMENTS = 'collect_payments';  // Create and interact with checkouts
-	const SCOPE_REFUND_PAYMENTS  = 'refund_payments';   // Refund checkouts
-	const SCOPE_VIEW_USER        = 'view_user';         // Get details about authenticated user
+	const SCOPE_MANAGE_ACCOUNTS     = 'manage_accounts';     // Open and interact with accounts
+	const SCOPE_VIEW_BALANCE        = 'view_balance';        // View account balances
+	const SCOPE_COLLECT_PAYMENTS    = 'collect_payments';    // Create and interact with checkouts
+	const SCOPE_VIEW_USER           = 'view_user';           // Get details about authenticated user
+	const SCOPE_PREAPPROVE_PAYMENTS = 'preapprove_payments'; // Create and interact with preapprovals
+	const SCOPE_SEND_MONEY          = 'send_money';          // For withdrawals
 
 	/**
 	 * Application's client ID
@@ -34,8 +35,9 @@ class WePay {
 		self::SCOPE_MANAGE_ACCOUNTS,
 		self::SCOPE_VIEW_BALANCE,
 		self::SCOPE_COLLECT_PAYMENTS,
-		self::SCOPE_REFUND_PAYMENTS,
+		self::SCOPE_PREAPPROVE_PAYMENTS,
 		self::SCOPE_VIEW_USER,
+		self::SCOPE_SEND_MONEY,
 	);
 
 	/**
