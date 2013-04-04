@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.1.0';
+	const VERSION = '0.1.1';
 
 	/**
 	 * Scope fields
@@ -134,14 +134,14 @@ class WePay {
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
 			if ($httpCode >= 500) {
-				throw new WePayServerException($result->error_description);
+				throw new WePayServerException($result->error_description, $httpCode, $result->error_code);
 			}
 			switch ($result->error) {
 				case 'invalid_request':
-					throw new WePayRequestException($result->error_description, $httpCode);
+					throw new WePayRequestException($result->error_description, $httpCode, $result->error_code);
 				case 'access_denied':
 				default:
-					throw new WePayPermissionException($result->error_description, $httpCode);
+					throw new WePayPermissionException($result->error_description, $httpCode, $result->error_code);
 			}
 		}
 		return $result;
@@ -237,14 +237,14 @@ class WePay {
 		$httpCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
 			if ($httpCode >= 500) {
-				throw new WePayServerException($result->error_description, $httpCode, $result);
+				throw new WePayServerException($result->error_description, $httpCode, $result, $result->error_code);
 			}
 			switch ($result->error) {
 				case 'invalid_request':
-					throw new WePayRequestException($result->error_description, $httpCode, $result);
+					throw new WePayRequestException($result->error_description, $httpCode, $result, $result->error_code);
 				case 'access_denied':
 				default:
-					throw new WePayPermissionException($result->error_description, $httpCode, $result);
+					throw new WePayPermissionException($result->error_description, $httpCode, $result, $result->error_code);
 			}
 		}
 		return $result;
