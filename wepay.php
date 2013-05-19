@@ -157,6 +157,9 @@ class WePay {
 		if ($token && !is_string($token)) {
 			throw new InvalidArgumentException('$token must be a string, ' . gettype($token) . ' provided');
 		}
+		if ($token && strpos($token, "\n") !== false) {
+			throw new InvalidArgumentException('$token must not contain a newline');
+		}
 		$this->token = $token;
 	}
 
