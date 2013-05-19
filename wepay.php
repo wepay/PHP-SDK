@@ -29,7 +29,7 @@ class WePay {
 	private static $client_secret;
 
 	/**
-	 * Pass Wepay::$all_scopes into getAuthorizationUri if your application desires full access
+	 * @deprecated Use WePay::getAllScopes() instead.
 	 */
 	public static $all_scopes = array(
 		self::SCOPE_MANAGE_ACCOUNTS,
@@ -54,6 +54,20 @@ class WePay {
 	 * Authenticated user's access token
 	 */
 	private $token;
+
+	/**
+	 * Pass WePay::getAllScopes() into getAuthorizationUri if your application desires full access
+	 */
+	public static function getAllScopes() {
+		return array(
+			self::SCOPE_MANAGE_ACCOUNTS,
+			self::SCOPE_VIEW_BALANCE,
+			self::SCOPE_COLLECT_PAYMENTS,
+			self::SCOPE_PREAPPROVE_PAYMENTS,
+			self::SCOPE_VIEW_USER,
+			self::SCOPE_SEND_MONEY,
+		);
+	}
 
 	/**
 	 * Generate URI used during oAuth authorization
