@@ -1,5 +1,5 @@
 <?php
-require '_shared.php';
+require './_shared.php';
 
 // ** YOU MUST CHANGE THIS FOR THE SAMPLE APP TO WORK **
 $redirect_uri = 'http://YOUR SERVER NAME/login.php';
