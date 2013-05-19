@@ -80,7 +80,7 @@ class WePay {
 			'state'        => empty($options['state'])      ? '' : $options['state'],
 			'user_name'    => empty($options['user_name'])  ? '' : $options['user_name'],
 			'user_email'   => empty($options['user_email']) ? '' : $options['user_email'],
-		));
+		), '', '&');
 		return $uri;
 	}
 
