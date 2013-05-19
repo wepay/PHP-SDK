@@ -3,7 +3,7 @@ require '_shared.php';
 
 // ** YOU MUST CHANGE THIS FOR THE SAMPLE APP TO WORK **
 $redirect_uri = 'http://YOUR SERVER NAME/login.php';
-$scope = WePay::$all_scopes;
+$scope = WePay::getAllScopes();
 
 // If we are already logged in, send the user home
 if (!empty($_SESSION['wepay_access_token'])) {
