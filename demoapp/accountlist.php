@@ -10,7 +10,10 @@ try {
 	$wepay = new WePay($_SESSION['wepay_access_token']);
 	$accounts = $wepay->request('account/find');
 	foreach ($accounts as $account) {
-		echo "<a href=\"$account->account_uri\">$account->name</a>: $account->description <br />";
+		echo "<a href=\"" . htmlspecialchars($account->account_uri) . "\">";
+		echo htmlspecialchars($account->name);
+		echo "</a>: ";
+		echo htmlspecialchars($account->description) . "<br />";
 	}
 }
 catch (WePayException $e) {

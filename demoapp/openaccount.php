@@ -8,16 +8,17 @@ require './_shared.php';
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (isset($_POST['account_name']) && isset($_POST['account_description'])) {
-		// WePay sanitizes its own data, but displaying raw POST data on your own site is a XSS security hole.
-		$name = htmlentities($_POST['account_name']);
-		$desc = htmlentities($_POST['account_description']);
 		try {
 			$wepay = new WePay($_SESSION['wepay_access_token']);
 			$account = $wepay->request('account/create', array(
-				'name' => $name,
-				'description' => $desc,
+				'name' => $_POST['account_name'],
+				'description' => $_POST['account_description'],
 			));
-			echo "Created account $name for '$desc'! View on WePay at <a href=\"$account->account_uri\">$account->account_uri</a>. See all of your accounts <a href=\"accountlist.php\">here</a>.";
+			// WePay sanitizes its own data, but displaying raw POST data on your own site is a XSS security hole.
+			$name = htmlspecialchars($_POST['account_name']);
+			$desc = htmlspecialchars($_POST['account_description']);
+			$account_uri = htmlspecialchars($account->account_uri);
+			echo "Created account $name for '$desc'! View on WePay at <a href=\"$account_uri\">$account_uri</a>. See all of your accounts <a href=\"accountlist.php\">here</a>.";
 		}
 		catch (WePayException $e) {
 			// Something went wrong - normally you would log
