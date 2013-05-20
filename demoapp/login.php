@@ -16,7 +16,7 @@ if (!empty($_SESSION['wepay_access_token'])) {
 // like a domain mismatch on your redirect_uri
 if (!empty($_GET['error'])) {
 	echo 'Error during user authentication: ';
-	echo htmlentities($_GET['error_description']);
+	echo htmlspecialchars($_GET['error_description']);
 	exit;
 }
 

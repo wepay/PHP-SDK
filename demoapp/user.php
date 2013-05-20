@@ -11,7 +11,8 @@ try {
 	$user = $wepay->request('user');
 	echo '<dl>';
 	foreach ($user as $key => $value) {
-		echo "<dt>$key</dt><dd>$value</dd>";
+		echo "<dt>" . htmlspecialchars($key) . "</dt>";
+		echo "<dd>" . htmlspecialchars($value) . "</dd>";
 	}
 	echo '</dl>';
 }
