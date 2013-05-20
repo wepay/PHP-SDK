@@ -45,7 +45,7 @@ try {
 		<p>The following is a list of all accounts that this user owns</p>
 		
 		<?php if (isset($error)): ?>
-			<h2 style="color:red">ERROR: <?php echo $error ?></h2>
+			<h2 style="color:red">ERROR: <?php echo htmlspecialchars($error); ?></h2>
 		<?php elseif (empty($accounts)) : ?>
 			<h2>You do not have any accounts. Go to <a href="https://stage.wepay.com.com">https://stage.wepay.com</a> to open an account.<h2>
 		<?php else: ?>
@@ -60,9 +60,9 @@ try {
 				<tbody>
 				<?php foreach ($accounts as $a): ?>
 					<tr>
-						<td><?php echo $a->account_id ?></td>
-						<td><?php echo $a->name ?></td>
-						<td><?php echo $a->description ?></td>
+						<td><?php echo htmlspecialchars($a->account_id); ?></td>
+						<td><?php echo htmlspecialchars($a->name); ?></td>
+						<td><?php echo htmlspecialchars($a->description); ?></td>
 					</tr>
 				<?php endforeach;?>
 				</tbody>

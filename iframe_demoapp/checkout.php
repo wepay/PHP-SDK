@@ -52,7 +52,7 @@ try {
 		<p>The user will checkout here:</p>
 		
 		<?php if (isset($error)): ?>
-			<h2 style="color:red">ERROR: <?php echo $error ?></h2>
+			<h2 style="color:red">ERROR: <?php echo htmlspecialchars($error); ?></h2>
 		<?php else: ?>
 			<div id="checkout_div"></div>
 		
