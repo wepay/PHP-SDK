@@ -213,17 +213,23 @@ class WePay {
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error(self::$ch), $errno);
 		}
 		$result = json_decode($raw);
+
+		$error_code = null;
+		if (isset($result->error_code)) {
+		  $error_code = $result->error_code;
+		}
+
 		$httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
 			if ($httpCode >= 500) {
-				throw new WePayServerException($result->error_description, $httpCode, $result, $result->error_code);
+				throw new WePayServerException($result->error_description, $httpCode, $result, $error_code);
 			}
 			switch ($result->error) {
 				case 'invalid_request':
-					throw new WePayRequestException($result->error_description, $httpCode, $result, $result->error_code);
+					throw new WePayRequestException($result->error_description, $httpCode, $result, $error_code);
 				case 'access_denied':
 				default:
-					throw new WePayPermissionException($result->error_description, $httpCode, $result, $result->error_code);
+					throw new WePayPermissionException($result->error_description, $httpCode, $result, $error_code);
 			}
 		}
 		
