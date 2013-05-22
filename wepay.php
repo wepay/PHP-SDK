@@ -215,6 +215,9 @@ class WePay {
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
+			if (!isset($result->error_code)) {
+				throw new WePayServerException("WePay returned an error response with no error_code, please alert api@wepay.com. Original message: $result->error_description", $httpCode, $result, 0);
+			}
 			if ($httpCode >= 500) {
 				throw new WePayServerException($result->error_description, $httpCode, $result, $result->error_code);
 			}
