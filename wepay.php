@@ -5,7 +5,7 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.1.3';
+	const VERSION = '0.1.4';
 
 	/**
 	 * Scope fields
