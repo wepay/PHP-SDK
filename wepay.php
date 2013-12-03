@@ -166,7 +166,7 @@ class WePay {
 	/**
 	 * Returns the current environment.
 	 * @return string "none" (not configured), "production" or "staging".
-  	 */
+	 */
 	public static function getEnvironment() {
 		if(self::$production === null) {
 			return 'none';
