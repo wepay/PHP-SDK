@@ -164,6 +164,20 @@ class WePay {
 	}
 
 	/**
+	 * Returns the current environment.
+	 * @return string "none" (not configured), "production" or "staging".
+  	 */
+	public static function getEnvironment() {
+		if(self::$production === null) {
+			return 'none';
+		} else if(self::$production) {
+			return 'production';
+		} else {
+			return 'staging';
+		}
+	}
+
+	/**
 	 * Create a new API session
 	 * @param string $token - access_token returned from WePay::getToken
 	 */
