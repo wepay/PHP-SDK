@@ -28,6 +28,13 @@ class WePay {
 	 */
 	private static $client_secret;
 
+
+	/**
+	 * API Version 
+	 * https://www.wepay.com/developer/reference/versioning
+	 */
+	private static $api_version;
+
 	/**
 	 * @deprecated Use WePay::getAllScopes() instead.
 	 */
@@ -138,13 +145,14 @@ class WePay {
 	 * @return void
 	 * @throws RuntimeException
 	 */
-	public static function useProduction($client_id, $client_secret) {
+	public static function useProduction($client_id, $client_secret, $api_version = null) {
 		if (self::$production !== null) {
 			throw new RuntimeException('API mode has already been set.');
 		}
 		self::$production    = true;
 		self::$client_id     = $client_id;
 		self::$client_secret = $client_secret;
+		self::$api_version 	 = $api_version;
 	}
 
 	/**
@@ -154,19 +162,20 @@ class WePay {
 	 * @return void
 	 * @throws RuntimeException
 	 */
-	public static function useStaging($client_id, $client_secret) {
+	public static function useStaging($client_id, $client_secret, $api_version = null) {
 		if (self::$production !== null) {
 			throw new RuntimeException('API mode has already been set.');
 		}
 		self::$production    = false;
 		self::$client_id     = $client_id;
 		self::$client_secret = $client_secret;
+		self::$api_version   = $api_version;
 	}
 
 	/**
 	 * Returns the current environment.
 	 * @return string "none" (not configured), "production" or "staging".
-	 */
+  	 */
 	public static function getEnvironment() {
 		if(self::$production === null) {
 			return 'none';
@@ -205,6 +214,12 @@ class WePay {
 	{
 		self::$ch = curl_init();
 		$headers = array_merge(array("Content-Type: application/json"), $headers); // always pass the correct Content-Type header
+
+		// send Api Version header
+		if(!empty(self::$api_version)) {
+			$headers[] = "Api-Version: " . self::$api_version;
+		}
+
 		curl_setopt(self::$ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
 		curl_setopt(self::$ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt(self::$ch, CURLOPT_HTTPHEADER, $headers);

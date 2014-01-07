@@ -20,6 +20,13 @@ For all requests, you must initialize the SDK with your Client ID and Client Sec
     require './wepay.php';
     WePay::useProduction('YOUR CLIENT ID', 'YOUR CLIENT SECRET'); // To initialize staging, use WePay::useStaging('ID','SECRET'); instead.
 
+To set an [API-Version](https://www.wepay.com/developer/reference/versioning) for your call request, use:
+
+    <?php
+    require './wepay.php';
+    WePay::useProduction('YOUR CLIENT ID', 'YOUR CLIENT SECRET', 'YOUR API VERSION'); // To initialize staging, use WePay::useStaging('ID','SECRET', 'YOUR API VERSION'); instead.
+
+
 ### Authentication ###
 
 To obtain an access token for your user, you must redirect the user to WePay for authentication. WePay uses OAuth2 for authorization, which is detailed [in our documentation](https://www.wepay.com/developer/reference/oauth2). To generate the URI to which you must redirect your user, the SDK contains `WePay::getAuthorizationUri($scope, $redirect_uri)`. `$scope` should be an array of scope strings detailed in the documentation. To request full access (most useful for testing, since users may be weary of granting permission to your application if it wants to do too much), you pay pass in `WePay::getAllScopes()`. `$redirect_uri` must be a fully qualified URI where we will send the user after permission is granted (or not granted), and the domain must match your application settings.
