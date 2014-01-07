@@ -20,7 +20,7 @@ For all requests, you must initialize the SDK with your Client ID and Client Sec
     require './wepay.php';
     WePay::useProduction('YOUR CLIENT ID', 'YOUR CLIENT SECRET'); // To initialize staging, use WePay::useStaging('ID','SECRET'); instead.
 
-To set an [API-Version](https://www.wepay.com/developer/reference/versioning) for your call request, use:
+To set an [API-Version](https://www.wepay.com/developer/reference/versioning) in the header with your call request, use:
 
     <?php
     require './wepay.php';
