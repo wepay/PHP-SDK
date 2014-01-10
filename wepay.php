@@ -152,7 +152,7 @@ class WePay {
 		self::$production    = true;
 		self::$client_id     = $client_id;
 		self::$client_secret = $client_secret;
-		self::$api_version	 = $api_version;
+		self::$api_version   = $api_version;
 	}
 
 	/**
