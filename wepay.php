@@ -17,6 +17,7 @@ class WePay {
 	const SCOPE_VIEW_USER           = 'view_user';           // Get details about authenticated user
 	const SCOPE_PREAPPROVE_PAYMENTS = 'preapprove_payments'; // Create and interact with preapprovals
 	const SCOPE_SEND_MONEY          = 'send_money';          // For withdrawals
+	const SCOPE_MANAGE_SUBSCRIPTIONS   = 'manage_subscriptions';
 
 	/**
 	 * Application's client ID
@@ -45,6 +46,7 @@ class WePay {
 		self::SCOPE_PREAPPROVE_PAYMENTS,
 		self::SCOPE_VIEW_USER,
 		self::SCOPE_SEND_MONEY,
+	    self::SCOPE_MANAGE_SUBSCRIPTIONS
 	);
 
 	/**
@@ -68,11 +70,12 @@ class WePay {
 	public static function getAllScopes() {
 		return array(
 			self::SCOPE_MANAGE_ACCOUNTS,
+		    self::SCOPE_MANAGE_SUBSCRIPTIONS,
 			self::SCOPE_VIEW_BALANCE,
 			self::SCOPE_COLLECT_PAYMENTS,
 			self::SCOPE_PREAPPROVE_PAYMENTS,
 			self::SCOPE_VIEW_USER,
-			self::SCOPE_SEND_MONEY,
+			self::SCOPE_SEND_MONEY
 		);
 	}
 
