@@ -188,6 +188,16 @@ class WePay {
 			return 'staging';
 		}
 	}
+	
+	/**
+	 * Set Api Version
+	 * https://www.wepay.com/developer/reference/versioning
+	 * 
+	 * @param string $api_version  Api Version to send to header
+	 */
+	public static function setApiVersion($version) {
+	    self::$api_version = $version;
+	}
 
 	/**
 	 * Create a new API session
