@@ -5,19 +5,18 @@ class WePay {
 	/**
 	 * Version number - sent in user agent string
 	 */
-	const VERSION = '0.2.0';
+	const VERSION = '0.2.1';
 
 	/**
 	 * Scope fields
 	 * Passed into Wepay::getAuthorizationUri as array
 	 */
 	const SCOPE_MANAGE_ACCOUNTS     = 'manage_accounts';     // Open and interact with accounts
-	const SCOPE_VIEW_BALANCE        = 'view_balance';        // View account balances
 	const SCOPE_COLLECT_PAYMENTS    = 'collect_payments';    // Create and interact with checkouts
 	const SCOPE_VIEW_USER           = 'view_user';           // Get details about authenticated user
 	const SCOPE_PREAPPROVE_PAYMENTS = 'preapprove_payments'; // Create and interact with preapprovals
+	const SCOPE_MANAGE_SUBSCRIPTIONS   = 'manage_subscriptions'; // Subscriptions
 	const SCOPE_SEND_MONEY          = 'send_money';          // For withdrawals
-	const SCOPE_MANAGE_SUBSCRIPTIONS   = 'manage_subscriptions';
 
 	/**
 	 * Application's client ID
@@ -41,12 +40,11 @@ class WePay {
 	 */
 	public static $all_scopes = array(
 		self::SCOPE_MANAGE_ACCOUNTS,
-		self::SCOPE_VIEW_BALANCE,
 		self::SCOPE_COLLECT_PAYMENTS,
 		self::SCOPE_PREAPPROVE_PAYMENTS,
 		self::SCOPE_VIEW_USER,
 		self::SCOPE_SEND_MONEY,
-	    self::SCOPE_MANAGE_SUBSCRIPTIONS
+		self::SCOPE_MANAGE_SUBSCRIPTIONS
 	);
 
 	/**
@@ -71,7 +69,6 @@ class WePay {
 		return array(
 			self::SCOPE_MANAGE_ACCOUNTS,
 		    self::SCOPE_MANAGE_SUBSCRIPTIONS,
-			self::SCOPE_VIEW_BALANCE,
 			self::SCOPE_COLLECT_PAYMENTS,
 			self::SCOPE_PREAPPROVE_PAYMENTS,
 			self::SCOPE_VIEW_USER,
