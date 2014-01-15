@@ -193,7 +193,7 @@ class WePay {
 	 * Set Api Version
 	 * https://www.wepay.com/developer/reference/versioning
 	 * 
-	 * @param string $api_version  Api Version to send in call request header
+	 * @param string $version  Api Version to send in call request header
 	 */
 	public static function setApiVersion($version) {
 	    self::$api_version = $version;
