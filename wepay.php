@@ -230,7 +230,7 @@ class WePay {
 			$headers[] = "Api-Version: " . self::$api_version;
 		}
 
-		curl_setopt(self::$ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
+		curl_setopt(self::$ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION . ' Client id:' . self::$client_id);
 		curl_setopt(self::$ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt(self::$ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt(self::$ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
