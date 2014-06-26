@@ -251,7 +251,6 @@ class WePay {
 			}
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error(self::$ch), $errno);
 		}
-
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
