@@ -230,7 +230,7 @@ class WePay {
 			$headers[] = "Api-Version: " . self::$api_version;
 		}
 
-		curl_setopt(self::$ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION);
+		curl_setopt(self::$ch, CURLOPT_USERAGENT, 'WePay v2 PHP SDK v' . self::VERSION . ' Client id:' . self::$client_id);
 		curl_setopt(self::$ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt(self::$ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt(self::$ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
@@ -251,6 +251,7 @@ class WePay {
 			}
 			throw new Exception('cURL error while making API call to WePay: ' . curl_error(self::$ch), $errno);
 		}
+
 		$result = json_decode($raw);
 		$httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
 		if ($httpCode >= 400) {
