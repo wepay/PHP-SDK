@@ -8,6 +8,6 @@
 		}
 	],
 	"autoload": {
-		"files": ["wepay.php"]
+		"classmap": ["wepay.php"]
 	}
 }
