@@ -26,7 +26,7 @@ class WePay
     /**
      * Version number - sent in user agent string
      */
-    const VERSION = '0.2.5';
+    const VERSION = '0.2.6';
 
     /**
      * Scope fields
@@ -159,6 +159,7 @@ class WePay
             'code'          => $code,
             'state'         => '', // do not hardcode
         ));
+        $result = self::make_request('oauth2/token', $params);
         return $result;
     }
 
@@ -279,7 +280,7 @@ class WePay
             if ($errno == CURLE_OPERATION_TIMEOUTED) {
                 throw new WePayServerException("Timeout occurred while trying to connect to WePay");
             }
-            throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error($this->ch), $errno);
+            throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error(self::$ch), $errno);
         }
         $result = json_decode($raw);
         $httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
