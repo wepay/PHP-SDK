@@ -26,7 +26,7 @@ class WePay
     /**
      * Version number - sent in user agent string
      */
-    const VERSION = '0.2.5';
+    const VERSION = '0.2.6';
 
     /**
      * Scope fields
@@ -159,6 +159,7 @@ class WePay
             'code'          => $code,
             'state'         => '', // do not hardcode
         ));
+        $result = self::make_request('oauth2/token', $params);
         return $result;
     }
 
