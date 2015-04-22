@@ -1,13 +1,29 @@
 {
-	"name": "wepay/php-sdk",
-	"description": "WePay APIv2 SDK for PHP",
-	"authors": [
-		{
-			"name": "WePay",
-			"email": "api@wepay.com"
-		}
-	],
-	"autoload": {
-		"classmap": ["wepay.php"]
-	}
+    "name": "wepay/php-sdk",
+    "description": "WePay APIv2 SDK for PHP",
+    "keywords": ["wepay", "payment", "sdk"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "WePay",
+            "email": "api@wepay.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/wepay/PHP-SDK/issues"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "wepay.php"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.2-dev"
+        }
+    }
 }
