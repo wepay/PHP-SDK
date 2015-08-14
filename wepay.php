@@ -105,7 +105,7 @@ class WePay
      * @link https://www.wepay.com/developer/reference/oauth2
      * @param  array  $scope        List of scope fields for which your application wants access
      * @param  string $redirect_uri Where user goes after logging in at WePay (domain must match application settings)
-     * @param  array  $options      optional  user_name,user_email which will be pre-filled on login form, state to be returned in querystring of redirect_uri
+     * @param  array  $options      optional  user_name, user_email, user_country which will be pre-filled on login form, state to be returned in querystring of redirect_uri
      * @return string URI to which you must redirect your user to grant access to your application
      */
     public static function getAuthorizationUri(array $scope, $redirect_uri, array $options = array())
