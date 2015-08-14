@@ -26,7 +26,7 @@ class WePay
     /**
      * Version number - sent in user agent string
      */
-    const VERSION = '0.2.6';
+    const VERSION = '0.3.0';
 
     /**
      * Scope fields
@@ -102,10 +102,13 @@ class WePay
      * Generate URI used during oAuth authorization
      * Redirect your user to this URI where they can grant your application
      * permission to make API calls
+     *
      * @link https://www.wepay.com/developer/reference/oauth2
-     * @param  array  $scope        List of scope fields for which your application wants access
-     * @param  string $redirect_uri Where user goes after logging in at WePay (domain must match application settings)
-     * @param  array  $options      optional  user_name,user_email which will be pre-filled on login form, state to be returned in querystring of redirect_uri
+     *
+     * @param  array  $scope        List of scope fields for which your application wants access.
+     * @param  string $redirect_uri Where user goes after logging in at WePay (domain must match application settings).
+     * @param  array  $options      `user_name,user_email` which will be pre-filled on login form, state to be returned
+     *                              in query string of redirect_uri. The default value is an empty array.
      * @return string URI to which you must redirect your user to grant access to your application
      */
     public static function getAuthorizationUri(array $scope, $redirect_uri, array $options = array())
@@ -267,6 +270,11 @@ class WePay
         curl_setopt(self::$ch, CURLOPT_TIMEOUT, 30); // 30-second timeout, adjust to taste
         curl_setopt(self::$ch, CURLOPT_POST, !empty($values)); // WePay's API is not strictly RESTful, so all requests are sent as POST unless there are no request values
 
+        // Force TLS 1.2 connections
+        curl_setopt(self::$ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt(self::$ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt(self::$ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+
         $uri = self::getDomain() . $endpoint;
         curl_setopt(self::$ch, CURLOPT_URL, $uri);
 
@@ -282,8 +290,10 @@ class WePay
             }
             throw new Exception('cURL error while making API call to WePay: cURL Errno - ' . $errno . ', ' . curl_error(self::$ch), $errno);
         }
+
         $result = json_decode($raw);
         $httpCode = curl_getinfo(self::$ch, CURLINFO_HTTP_CODE);
+
         if ($httpCode >= 400) {
             if (!isset($result->error_code)) {
                 throw new WePayServerException("WePay returned an error response with no error_code, please alert api@wepay.com. Original message: $result->error_description", $httpCode, $result, 0);
