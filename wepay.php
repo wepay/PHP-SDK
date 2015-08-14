@@ -122,9 +122,10 @@ class WePay
             'client_id'    => self::$client_id,
             'redirect_uri' => $redirect_uri,
             'scope'        => implode(',', $scope),
-            'state'        => empty($options['state'])      ? '' : $options['state'],
-            'user_name'    => empty($options['user_name'])  ? '' : $options['user_name'],
-            'user_email'   => empty($options['user_email']) ? '' : $options['user_email'],
+            'state'        => empty($options['state'])        ? '' : $options['state'],
+            'user_name'    => empty($options['user_name'])    ? '' : $options['user_name'],
+            'user_email'   => empty($options['user_email'])   ? '' : $options['user_email'],
+            'user_country' => empty($options['user_country']) ? '' : $options['user_country'],
         ), '', '&');
 
         return $uri;
