@@ -1,4 +1,4 @@
-WePay PHP SDK
+WePay SDK for PHP
 =============
 
 WePay's API allows you to easily add payments into your application.
@@ -106,7 +106,32 @@ try {
 }
 ```
 
-And that's it!  For more detail on what API calls are available, their parameters and responses, and what permissions they require, please see [our documentation](https://www.wepay.com/developer/reference). For some more detailed examples, look in the `demoapp` directory and check the README. Dropping the entire directory in a web-accessible location and adding your API keys should allow you to be up and running in just a few seconds.
+For more details on which API calls are available, their parameters and responses, and which permissions they require,
+please see [our documentation](https://www.wepay.com/developer/reference). For some more detailed examples, look in the 
+`demoapp` directory and check the README. Dropping the entire directory in a web-accessible location and adding your 
+API keys should allow you to be up and running in just a few seconds.
+
+Security
+--------
+
+### Connections require TLS 1.2 ###
+
+According to updated PCI requirements, SSL (v2, v3) and early TLS (1.0, 1.1) are no longer considered “strong 
+cryptography” and cannot be used as a security control after 2016-06-30. Because of this, WePay will be updating its API 
+endpoints to only allow TLS 1.2 connections over the coming months.
+
+WePay SDK for PHP version 0.3.0 is _possibly_ backwards-incompatible depending on how new or old your PHP stack is, 
+hence the [Semantic Versioning](http://semver.org) bump.
+
+Using the [PHP cURL extension](https://secure.php.net/manual/en/intro.curl.php), PHP will make outbound requests via the 
+system’s cURL installation. For licensing reasons, the PHP cURL extension uses NSS instead of OpenSSL.
+
+* [PHP (Zend Engine) 5.5.19+ or 5.6.3+ is required](https://secure.php.net/manual/en/curl.constants.php).
+* The PHP cURL extension requires cURL `7.34.0` (or newer) on the underlying system.
+* The PHP cURL extension must be compiled with NSS `3.15.1` (or newer).
+* HHVM 3.0 (or newer) and/or Hacklang (any version) has [the same cURL and cURL extension requirements as for 
+  PHP](https://twitter.com/SaraMG/status/631654826426798081).
+
 
 ### SSL Certificate ###
 
