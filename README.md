@@ -111,6 +111,22 @@ please see [our documentation](https://www.wepay.com/developer/reference). For s
 `demoapp` directory and check the README. Dropping the entire directory in a web-accessible location and adding your 
 API keys should allow you to be up and running in just a few seconds.
 
+### Risk Headers ###
+
+You can supply WePay with risk-related information on every API call by passing the WePay-Risk-Token and Client-IP values to the `request` function:
+
+```
+$checkout = $wepay->request('/checkout/create', array(
+                'account_id' => 1723052,
+                'amount' => 50,
+                'currency': 'USD',
+                'short_description': 'Selling 42 Pens',
+                'type': 'goods'
+            ), '123e4567-e89b-12d3-a456-426655440000', '100.166.99.123');
+```
+
+Detailed information regarding the Risk Headers can be found at the [WePay API Documentation](https://developer.wepay.com/reference/risk_headers).
+
 Security
 --------
 
