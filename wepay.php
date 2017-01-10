@@ -316,18 +316,28 @@ class WePay
 
     /**
      * Make API calls against authenticated user
-     * @param  string         $endpoint - API call to make (ex. 'user', 'account/find')
-     * @param  array          $values   - Associative array of values to send in API call
+     * @param  string         $endpoint     - API call to make (ex. 'user', 'account/find')
+     * @param  array          $values       - Associative array of values to send in API call
+     * @param  string         $risk_token   - WePay-supplied risk token associated with this API call
+     * @param  string         $client_ip    - Client's IP address associated with this API call
      * @return StdClass
      * @throws WePayException on failure
      * @throws Exception      on catastrophic failure (non-WePay-specific cURL errors)
      */
-    public function request($endpoint, array $values = array())
+    public function request($endpoint, array $values = array(), $risk_token = null, $client_ip = null)
     {
         $headers = array();
 
         if ($this->token) { // if we have an access_token, add it to the Authorization header
             $headers[] = "Authorization: Bearer $this->token";
+        }
+
+        if ($risk_token) { // if we have a risk_token, add it to the WePay-Risk-Token header
+            $headers[] = "WePay-Risk-Token: " . $risk_token;
+        }
+
+        if ($client_ip) { // if we have a client_ip, add it to the Client-IP header
+            $headers[] = "Client-IP: " . $client_ip;
         }
 
         $result = self::make_request($endpoint, $values, $headers);
