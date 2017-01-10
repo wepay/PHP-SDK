@@ -116,7 +116,7 @@ API keys should allow you to be up and running in just a few seconds.
 You can supply WePay with risk-related information on every API call by passing the WePay-Risk-Token and Client-IP values to the `request` function:
 
 ```
-$checkout = $wepay->request('/checkout/create', array(
+$checkout = $wepay->request('checkout/create', array(
                 'account_id' => 1723052,
                 'amount' => 50,
                 'currency': 'USD',
