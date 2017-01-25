@@ -10,7 +10,7 @@ Installation
 
 Using [Composer]:
 ```bash
-composer require wepay/php-sdk=^0.2
+composer require wepay/php-sdk=^0.3
 ```
 
 And include it in your scripts:
