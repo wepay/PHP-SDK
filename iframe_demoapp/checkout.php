@@ -30,9 +30,10 @@ try {
 	$checkout = $wepay->request('/checkout/create', array(
 			'account_id' => $account_id, // ID of the account that you want the money to go to
 			'amount' => 100, // dollar amount you want to charge the user
+			'currency' => "USD", // the currency used
 			'short_description' => "this is a test payment", // a short description of what the payment is for
-			'type' => "GOODS", // the type of the payment - choose from GOODS SERVICE DONATION or PERSONAL
-			'mode' => "iframe", // put iframe here if you want the checkout to be in an iframe, regular if you want the user to be sent to WePay
+			'type' => "goods", // the type of the payment - choose from 'goods', 'service', 'donation', 'event', or 'personal'
+			'hosted_checkout' => ['mode' => "iframe"], // user 'hosted_checkout' parameter if you want the checkout to be in an iframe, use 'payment_method' parameter instead if you want to use payment information your platform has previously aquired
 		)
 	);
 } catch (WePayException $e) { // if the API call returns an error, get the error message for display later
@@ -60,7 +61,7 @@ try {
 			</script>
 			
 			<script type="text/javascript">
-			WePay.iframe_checkout("checkout_div", "<?php echo $checkout->checkout_uri ?>");
+			WePay.iframe_checkout("checkout_div", "<?php echo $checkout->hosted_checkout->checkout_uri ?>");
 			</script>
 		<?php endif; ?>
 	
