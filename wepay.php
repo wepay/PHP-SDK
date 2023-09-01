@@ -363,6 +363,8 @@ class WePay
  */
 class WePayException extends Exception
 {
+    public $response = false;
+    
     public function __construct($description = '', $http_code = FALSE, $response = FALSE, $code = 0, $previous = NULL)
     {
         $this->response = $response;
